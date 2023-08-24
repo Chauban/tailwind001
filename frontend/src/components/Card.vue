@@ -3,7 +3,11 @@
     <div @mouseover="hover = true" @mouseleave="hover = false" class="relative p-1">
         <!-- rounded-lg 是一个 TailwindCSS 的工具类，它为元素提供了大的圆角。
         在 TailwindCSS 中，这通常意味着图片的四个角都会被稍微圆润处理，从而得到一个圆角的效果。 -->
-        <img :src="src" alt="" class="rounded-lg">
+        <img 
+            v-lazy="src" 
+            @lazyloaded="handleImageLoaded"
+            alt="" 
+            class="rounded-lg">
         <!-- 当鼠标悬停在卡片上时，显示一个半透明的覆盖层 -->
         <!-- <div v-if="hover" class="absolute bg-dark opacity-50 inset-0 w-full h-full rounded-lg"></div> -->
         <!-- 改成当鼠标悬停在卡片上时，显示一个在底部固定高度的半透明覆盖层 -->
@@ -14,7 +18,7 @@
             <div class="flex items-center justify-between">
                 <button type="button" name="button" class="flex items-center">
                 <!-- 显示卡片所属的板块 -->
-                <p class="font-semibold text-white"> {{ board }} </p>
+                <p class="font-semibold text-white"> {{ model }} </p>
                 <!-- 下拉图标 -->
                 <span class="material-icons text-white">expand_more</span>
                 </button>
@@ -40,13 +44,27 @@
   
 
 <script setup>
-import { ref } from 'vue';
+import { ref, defineProps, defineEmits } from 'vue';
 
-// 接收从父组件传递的属性：图片源和板块名称
-const props = defineProps(['src', 'board']);
+// 接收从父组件传递的属性：图片源、板块名称和是否是最后一个元素
+defineProps(['src', 'model', 'isLast']);
 
 // 控制是否显示悬停效果的状态变量
 const hover = ref(false);
+
+// 定义一个事件发射器
+const emit = defineEmits();
+// 当图片加载完成时的处理函数
+const handleImageLoaded = () => {
+
+    emit('imageLoaded');
+    
+    // 如果是最后一个元素，发射一个事件通知父组件加载更多数据
+    if (props.isLast) {
+        emit('loadMore');
+  }
+};
+
 </script>
 
   
