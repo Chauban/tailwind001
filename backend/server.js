@@ -68,6 +68,8 @@ app.get('/images', (req, res) => {
     const startIndex = (page - 1) * limit;
     const endIndex = startIndex + limit;
 
+    console.log('Respond image from index',startIndex, 'to', endIndex)
+
     // 切片操作来获取当前页面的数据
     const paginatedImages = imageData.slice(startIndex, endIndex);
 
